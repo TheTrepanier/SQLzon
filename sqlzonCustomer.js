@@ -20,6 +20,7 @@ connection.connect(function (error) {
 
     // place functions here
     showAllItems();
+    placeOrder();
 })
 
 function showAllItems() {
@@ -41,12 +42,64 @@ function showAllItems() {
                 
             }
         }
-    )
-    connection.end(function (error) {
-        if (error) {
-            console.log(error);
-            return;
+    );
+}
+
+function placeOrder() {
+    inquirer.prompt([
+        {
+            type: "confirm",
+            message: "Do you know the ID of the product that you would like to purchase?",
+            name: "verif"
         }
-        console.log("Session Ended Successfully");
+    ]).then(function (response) {
+        if (response.verif) {
+            inquirer.prompt([
+                {
+                    type: "number",
+                    message: "Please enter the ID of the product you would like to purchase",
+                    name: "prodID",
+                },
+                {
+                    type: "number",
+                    message: "How many would you like?",
+                    name: "quantity"
+                }
+            ]).then(function (response) {
+                let order = response;
+                
+                connection.query(
+                    "SELECT * FROM products WHERE ?", 
+                    { id: Number(order.prodID) },
+                    function (error, response) {
+                        let data = response[0];
+                        if (error) {
+                            console.log(error);
+                            return;
+                        }
+                        
+                        console.log("You have selected: " + data.product_name);
+                        connection.end(function (error) {
+                          if (error) {
+                              console.log(error);
+                              return;
+                          }
+                          console.log("Session Ended Successfully");
+                        });
+                    }
+                );
+
+            });
+        } else {
+            console.log("Here, take a moment to look at our inventory.");
+            showAllItems();
+            connection.end(function (error) {
+              if (error) {
+                  console.log(error);
+                  return;
+              }
+              console.log("Session Ended Successfully");
+            });
+        }
     });
 }
