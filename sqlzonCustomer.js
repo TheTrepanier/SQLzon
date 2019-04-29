@@ -21,6 +21,7 @@ connection.connect(function (error) {
     // place functions here
     showAllItems();
     placeOrder();
+    ui.updateBottomBar('new bottom bar content');
 })
 
 function showAllItems() {
@@ -66,7 +67,7 @@ function placeOrder() {
                     name: "quantity"
                 }
             ]).then(function (response) {
-                let order = response;
+                var order = response;
                 
                 connection.query(
                     "SELECT * FROM products WHERE ?", 
@@ -77,15 +78,19 @@ function placeOrder() {
                             console.log(error);
                             return;
                         }
+                        let costOfOrder = data.price * order.quantity;
                         
                         console.log("You have selected: " + data.product_name);
-                        connection.end(function (error) {
-                          if (error) {
-                              console.log(error);
-                              return;
-                          }
-                          console.log("Session Ended Successfully");
-                        });
+                        if (order.quantity > data.stock_quantity) {
+                            console.log("Unfortunatly we only have " + data.stock_quantity + " of " + data.product_name);
+                        } else {
+                            console.log("Here we are, " + order.quantity + " " + data.product_name);
+                            console.log("That will be, " + "$" + costOfOrder);
+
+
+
+                        }
+                        endConnection();
                     }
                 );
 
@@ -93,13 +98,17 @@ function placeOrder() {
         } else {
             console.log("Here, take a moment to look at our inventory.");
             showAllItems();
-            connection.end(function (error) {
-              if (error) {
-                  console.log(error);
-                  return;
-              }
-              console.log("Session Ended Successfully");
-            });
+            endConnection();
         }
+    });
+}
+
+function endConnection() {
+    connection.end(function (error) {
+      if (error) {
+          console.log(error);
+          return;
+      }
+      console.log("Session Ended Successfully");
     });
 }
