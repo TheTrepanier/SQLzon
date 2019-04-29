@@ -20,13 +20,13 @@ connection.connect(function (error) {
 
     // place functions here
     showAllItems();
-    placeOrder();
-    ui.updateBottomBar('new bottom bar content');
 })
 
 function showAllItems() {
     connection.query(
         "SELECT * FROM products", function (error, results) {
+            let thisManyItems = results.length;
+            console.log(thisManyItems);
             if (error) {
                 console.log(error);
                 return;
@@ -40,7 +40,9 @@ function showAllItems() {
                 console.log("Department Name: " + element.department_name);
                 console.log("Price: $" + element.price);
                 console.log("Number In Stock: " + element.stock_quantity);
-                
+                if (index == thisManyItems - 1) {
+                    placeOrder();
+                }
             }
         }
     );
