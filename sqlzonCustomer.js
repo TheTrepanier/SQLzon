@@ -20,7 +20,7 @@ connection.connect(function (error) {
 
     // place functions here
     showAllItems();
-})
+});
 
 function showAllItems() {
     connection.query(
@@ -117,7 +117,7 @@ function updateSQLzon(itemID, remaining, itemName) {
             console.log("We have " + remaining + " " + itemName + " remaining!");
             
         }
-    )
+    );
 }
 
 function endConnection() {
