@@ -84,13 +84,13 @@ function placeOrder() {
                         
                         console.log("You have selected: " + data.product_name);
                         if (order.quantity > data.stock_quantity) {
-                            console.log("Unfortunatly we only have " + data.stock_quantity + " of " + data.product_name);
+                            console.log("Unfortunatly we only have " + data.stock_quantity + " of " + data.product_name + ". Goodbye!");
                         } else {
+                            let quantityRemaining = data.stock_quantity - order.quantity;
                             console.log("Here we are, " + order.quantity + " " + data.product_name);
                             console.log("That will be, " + "$" + costOfOrder);
 
-
-
+                            updateSQLzon(order.prodID, quantityRemaining, data.product_name);
                         }
                         endConnection();
                     }
@@ -103,6 +103,21 @@ function placeOrder() {
             endConnection();
         }
     });
+}
+
+function updateSQLzon(itemID, remaining, itemName) { 
+    connection.query(
+        "UPDATE products SET stock_quantity = ? WHERE id = ?", 
+        [remaining, itemID], 
+        function (error) {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            console.log("We have " + remaining + " " + itemName + " remaining!");
+            
+        }
+    )
 }
 
 function endConnection() {
