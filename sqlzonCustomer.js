@@ -100,7 +100,6 @@ function placeOrder() {
         } else {
             console.log("Here, take a moment to look at our inventory.");
             showAllItems();
-            endConnection();
         }
     });
 }
